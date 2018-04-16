@@ -20,20 +20,19 @@ flights <- mutate(flights, gain_in_air = arr_delay - dep_delay)
 
 # Use `dplyr` to sort your data frame in descending order by the column you just
 # created. Remember to save this as a variable (or in the same one!)
-flights <- arrange(flights, gain_in_air)
+flights <- arrange(flights, -gain_in_air)
 
 # For practice, repeat the last 2 steps in a single statement using the pipe
 # operator. You can clear your environmental variables to "reset" the data frame
 flights <- mutate(flights, gain_in_air = arr_delay - dep_delay) %>%
-  arrange(time_gained_or_lost)
+  arrange(-time_gained_or_lost)
 
 # Make a histogram of the amount of time gained using the `hist()` function
-hist(select(flights, gain_in_air))
-?hist
-?select
+hist(flights$gain_in_air)
+
 # On average, did flights gain or lose time?
 # Note: use the `na.rm = TRUE` argument to remove NA values from your aggregation
-mean_in_air <- summarize(flights, mean(gain_in_air, na.rm = T)) < 0
+mean_in_air <- summarize(flights, mean(gain_in_air, na.rm = T))
 
 # Create a data.frame of flights headed to SeaTac ('SEA'), only including the
 # origin, destination, and the "gain_in_air" column you just created
@@ -41,9 +40,14 @@ to_sea_tac <- filter(flights, dest == "SEA") %>%
   select(origin, dest, gain_in_air)
 
 # On average, did flights to SeaTac gain or loose time?
-sea_tac_gain_or_loose <- summarize(flights, mean(gain_in_air, na.rm = T)) < 0
+sea_tac_gain_or_loose <- summarize(flights, mean(gain_in_air, na.rm = T))
  
 # Consider flights from JFK to SEA. What was the average, min, and max air time
 # of those flights? Bonus: use pipes to answer this question in one statement
 # (without showing any other data)!
-
+summary <- filter(flights, origin == "JFK", dest == "SEA") %>%
+  summarize(
+    avg_time = mean(gain_in_air, na.rm = T),
+    min_time = min(gain_in_air, na.rm = T),
+    max_time = max(gain_in_air, na.rm = T)
+  )
